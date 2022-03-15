@@ -25,14 +25,16 @@ func (s *Symbol) Next() *Symbol {
 }
 
 // Data returns the scanned data for this symbol.
-func (s *Symbol) Data() string {
+func (s *Symbol) Data() []byte {
 	sym := C.zbar_symbol_get_data(s.symbol)
 
 	if sym == nil {
 		return ""
 	}
 
-	return C.GoString(sym)
+	length := C.zbar_symbol_get_data_length(s.symbol)
+
+	return C.GoBytes(unsafe.Pointer(sym), C.int(length))
 }
 
 // Type returns the symbol type.
@@ -43,7 +45,7 @@ func (s *Symbol) Type() C.zbar_symbol_type_t {
 
 // Each will iterate over all symbols after this symbol.
 // passing them into the provided callback
-func (s *Symbol) Each(f func(string)) {
+func (s *Symbol) Each(f func([]byte)) {
 	t := s
 
 	for {
