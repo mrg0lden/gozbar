@@ -2,6 +2,8 @@
 // Read the ZBar documents for details
 package gozbar
 
+import "unsafe"
+
 // #cgo LDFLAGS: -lzbar
 // #include <zbar.h>
 import "C"
@@ -29,7 +31,7 @@ func (s *Symbol) Data() []byte {
 	sym := C.zbar_symbol_get_data(s.symbol)
 
 	if sym == nil {
-		return ""
+		return nil
 	}
 
 	length := C.zbar_symbol_get_data_length(s.symbol)
